@@ -6,9 +6,9 @@ import FloatingActionButtons from "@/components/FloatingActionButtons";
 
 const siteUrl = "https://daejeon-seven-night.com";
 const title =
-  "대전세븐나이트 웨이터 딸기 | 대전 예약 상담";
+  "대전세븐나이트 웨이터 딸기 | 010-9256-0035";
 const description =
-  "대전세븐나이트 웨이터 딸기 예약 상담 페이지. 대전광역시 중구 유천동 332-28 방문 전 가격, 시간대, 룸 분위기, 주류 세트, 드레스코드, 재방문 케어까지 실제 텍스트로 안내합니다.";
+  "대전세븐나이트 웨이터 딸기 010-9256-0035. 대전광역시 중구 유천동 332-28 방문 전 가격, 시간대, 룸 분위기, 주류 세트, 드레스코드, 재방문 케어까지 실제 텍스트로 안내합니다.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
         url: "/images/seven%20(1).png",
         width: 2400,
         height: 1000,
-        alt: "대전세븐나이트 웨이터 딸기 예약 상담"
+        alt: "대전세븐나이트 웨이터 딸기 010-9256-0035"
       }
     ]
   },

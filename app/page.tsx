@@ -78,7 +78,7 @@ const localBusinessSchema = {
   name: businessName,
   alternateName: ["대전세븐나이트", "중구세븐나이트", "유천동세븐나이트", "웨이터 딸기"],
   description:
-    "대전광역시 중구 유천동 332-28 대전세븐나이트 예약 상담. 웨이터 딸기의 가격 안내, 부킹 케어, 재방문 고객 관리, 시크릿 가이드 서비스.",
+    "대전광역시 중구 유천동 332-28 대전세븐나이트 010-9256-0035. 웨이터 딸기의 가격 안내, 부킹 케어, 재방문 고객 관리, 시크릿 가이드 서비스.",
   url: siteUrl,
   image: [
     `${siteUrl}/images/seven%20(1).png`,
