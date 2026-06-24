@@ -161,6 +161,7 @@ export default function Home() {
               <span className="block text-[#ff5f7a]">웨이터 딸기</span>
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-white/82 md:text-xl">
+              대전세븐나이트웨이터 딸기. 혼술환영 33세 이하 여성이라면 10전 입장 무료
               대전광역시 중구 유천동 332-28에서 특별한 밤을 준비한다면 방문 전 상담부터
               예약, 테이블 구성, 분위기 케어까지 딸기가 빠르게 안내합니다.
             </p>
