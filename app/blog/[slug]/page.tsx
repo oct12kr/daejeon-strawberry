@@ -3,9 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getBlogPostBySlug } from "@/lib/wordpress";
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
 type BlogPostPageProps = {
   params: Promise<{
     slug: string;

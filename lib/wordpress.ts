@@ -1,8 +1,17 @@
+import { cache } from "react";
+
 const WORDPRESS_ENDPOINT_ENV_KEYS = [
   "WORDPRESS_GRAPHQL_API_URL",
   "WORDPRESS_API_URL",
   "NEXT_PUBLIC_WORDPRESS_API_URL"
 ] as const;
+
+// 데이터 종류별 Next.js Data Cache revalidate 주기(초)
+const REVALIDATE_SECONDS = {
+  post: 300,
+  posts: 300,
+  postsByCategory: 300
+} as const;
 
 type GraphQLError = {
   message: string;
@@ -165,12 +174,11 @@ function getAuthorizationHeader() {
 
 async function wordpressGraphQL<TData>(
   query: string,
-  variables?: Record<string, string | number>
+  variables?: Record<string, string | number>,
+  revalidateSeconds: number = REVALIDATE_SECONDS.post
 ) {
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    "Cache-Control": "no-cache, no-store, must-revalidate",
-    "Pragma": "no-cache"
+    "Content-Type": "application/json"
   };
   const authorization = getAuthorizationHeader();
 
@@ -182,7 +190,7 @@ async function wordpressGraphQL<TData>(
     method: "POST",
     headers,
     body: JSON.stringify({ query, variables }),
-    cache: 'no-store'
+    next: { revalidate: revalidateSeconds }
   });
 
   const payload = (await response.json().catch(() => null)) as GraphQLResponse<TData> | null;
@@ -271,7 +279,11 @@ function normalizePost(node: WordPressPostNode): BlogPost | null {
 }
 
 export async function getBlogPosts(first = 12): Promise<BlogPostSummary[]> {
-  const data = await wordpressGraphQL<PostsQueryData>(POSTS_QUERY, { first });
+  const data = await wordpressGraphQL<PostsQueryData>(
+    POSTS_QUERY,
+    { first },
+    REVALIDATE_SECONDS.posts
+  );
 
   return (data.posts?.nodes ?? [])
     .map(normalizePost)
@@ -279,11 +291,17 @@ export async function getBlogPosts(first = 12): Promise<BlogPostSummary[]> {
     .map(({ content: _content, ...post }) => post);
 }
 
-export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
-  const data = await wordpressGraphQL<PostQueryData>(POST_BY_SLUG_QUERY, { slug });
+// generateMetadata()와 page()가 동일 slug를 각각 호출해도
+// 같은 요청 사이클 안에서는 WordPress에 한 번만 요청하도록 dedupe
+export const getBlogPostBySlug = cache(async (slug: string): Promise<BlogPost | null> => {
+  const data = await wordpressGraphQL<PostQueryData>(
+    POST_BY_SLUG_QUERY,
+    { slug },
+    REVALIDATE_SECONDS.post
+  );
 
   return data.post ? normalizePost(data.post) : null;
-}
+});
 
 export async function getBlogPostSlugs(first = 50) {
   const posts = await getBlogPosts(first);
@@ -331,10 +349,11 @@ export async function getBlogPostsByCategory(
   categorySlug: string,
   first = 3
 ): Promise<BlogPostSummary[]> {
-  const data = await wordpressGraphQL<PostsQueryData>(POSTS_BY_CATEGORY_QUERY, {
-    categoryName: categorySlug,
-    first
-  });
+  const data = await wordpressGraphQL<PostsQueryData>(
+    POSTS_BY_CATEGORY_QUERY,
+    { categoryName: categorySlug, first },
+    REVALIDATE_SECONDS.postsByCategory
+  );
 
   return (data.posts?.nodes ?? [])
     .map(normalizePost)
