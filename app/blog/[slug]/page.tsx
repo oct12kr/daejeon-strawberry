@@ -1,13 +1,21 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getBlogPostBySlug } from "@/lib/wordpress";
+import { getBlogPostBySlug, getBlogPostSlugs } from "@/lib/wordpress";
 
 type BlogPostPageProps = {
   params: Promise<{
     slug: string;
   }>;
 };
+
+// 빌드 시 최근 글을 정적 ISR로 미리 생성해 클릭 시 캐시된 HTML을 즉시 반환.
+// dynamicParams 기본값(true)이 유지되므로 목록에 없는 새 글도 첫 방문 시 렌더링 후 캐시됨(자동발행 반영 유지).
+export async function generateStaticParams() {
+  const slugs = await getBlogPostSlugs().catch(() => []);
+
+  return slugs.map(({ slug }) => ({ slug }));
+}
 
 function formatDate(value: string | null) {
   if (!value) {
